@@ -51,7 +51,17 @@
                                   (str  first-arg-val " {" sub-pattern "}")))
             case-sub-patterns-str (string/join "\n" case-sub-patterns)
             first-arg-parts (concat (map name first-arg)
-                                    [case-sub-patterns-str])
+                                    [case-sub-patterns-str]) 
+            inner-str (if (<= (count first-arg) 2)
+                      (let [arg-name (name (first first-arg))
+                            arg-type (name (second first-arg))
+                            pattern-parts [arg-name arg-type case-sub-patterns-str]
+                            comma-sep-parts-str (string/join ", " pattern-parts)]
+                        comma-sep-parts-str)
+                      (let [comma-sep-parts-str (string/join ", " (map name first-arg))
+                            pattern-parts [comma-sep-parts-str
+                                           case-sub-patterns-str]]
+                        (string/join "\n" pattern-parts))) 
             first-arg-pattern (str "{" (string/join ", " first-arg-parts) "}")]
         first-arg-pattern))))
 
