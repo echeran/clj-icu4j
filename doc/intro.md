@@ -147,7 +147,7 @@ Of course, there are ways in which the creation of the selection cases map can b
 
 ## BreakIterator Examples
 
-``` clj
+```clj
 (require '[clojure.string :as string])
 (require '[clojure.pprint :as pprint])
 (require '[clj-icu4j.segment :as seg])
@@ -156,7 +156,8 @@ Of course, there are ways in which the creation of the selection cases map can b
 ```
 
 Let's start off with pretty-printing.  Useful when we get to nested seqs / data structures.
-``` clj
+
+```clj
 ;; Note: clj-icu4j.core/line-seq is very different than clojure.core/line-seq
 
 (->> (seg/line-seq s) 
@@ -182,6 +183,7 @@ Let's start off with pretty-printing.  Useful when we get to nested seqs / data 
 ```
 
 Using Clojure's core library on seqs
+
 ``` clj
 (->> (seg/line-seq s)
      (drop 9)
