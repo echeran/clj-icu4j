@@ -4,7 +4,8 @@
             [clj-icu4j.message :as msg])
   (:import com.ibm.icu.util.ULocale))
 
-;; Examples adapted from preamble of Javadoc entry for MessageFormat:
+;; Test data for the following tests are adapted from preamble of
+;; Javadoc entry for MessageFormat:
 ;; http://icu-project.org/apiref/icu4j/com/ibm/icu/text/MessageFormat.html
 
 (deftest string-pattern-sequential-vals
@@ -44,8 +45,10 @@
         (is (= "There are 3 files on disk \"MyDisk\"."
            (msg/format fmtr args-map-2)))))))
 
+;; The following test data comes from
+;; http://userguide.icu-project.org/formatparse/messages
 
-(deftest selection-format-map-vals-multi-arg
+(deftest selection-format-map-vals-multi-arg-v1
   (testing "version 1 of simplifying multi-arg selection syntax"
     (let [fmtr (msg/formatter {:select-args [["gender_of_host" "select"]
                                              ["num_guests" "plural" "offset:1"]]
@@ -61,6 +64,97 @@
                                               ["other" "=1"] "{host} invites {guest} to their party."
                                               ["other" "=2"] "{host} invites {guest} and one other person to their party."
                                               ["other" "other"] "{host} invites {guest} and # other people to their party."}
+                               :locale ULocale/ENGLISH})]
+      (let [args-map {"gender_of_host" "male"
+                      "host" "MC Hammer"
+                      "num_guests" 0
+                      ;;"guest" "DJ Jazzy Jeff"
+                      }]
+        (is (= "MC Hammer does not give a party."
+               (msg/format fmtr args-map))))
+      (let [args-map {"gender_of_host" "male"
+                      "host" "MC Hammer"
+                      "num_guests" 2
+                      "guest" "DJ Jazzy Jeff"
+                      }]
+        (is (= "MC Hammer invites DJ Jazzy Jeff and one other person to his party."
+               (msg/format fmtr args-map))))
+      (let [args-map {"gender_of_host" "female"
+                      "host" "Paula Poundstone"
+                      "num_guests" 1
+                      "guest" "Michelle Wolf"}]
+        (is (= "Paula Poundstone invites Michelle Wolf to her party."
+               (msg/format fmtr args-map))))
+      (let [args-map {"gender_of_host" "other"
+                      "host" "The Fry Guys"
+                      "num_guests" 8
+                      "guest" "Ronald McDonald"}]
+        (is (= "The Fry Guys invites Ronald McDonald and 7 other people to their party."
+               (msg/format fmtr args-map)))))))
+
+(deftest selection-format-map-vals-multi-arg-v2
+  (testing "version 2 of simplifying multi-arg selection syntax"
+    (let [gender-possessive-pronouns {"female" "her"
+                                      "male" "his"
+                                      "other" "their"}
+          gender-cases-submap-fn (fn [gender]
+                                   (let [possessive-pronoun (get gender-possessive-pronouns gender)
+                                         submap {[gender "=0"] "{host} does not give a party."
+                                                 [gender "=1"] (str "{host} invites {guest} to " possessive-pronoun  " party.")
+                                                 [gender "=2"] (str "{host} invites {guest} and one other person to " possessive-pronoun  " party.")
+                                                 [gender "other"] (str "{host} invites {guest} and # other people to " possessive-pronoun " party.")}]
+                                     submap))
+          gender-cases-submaps (for [gender (keys gender-possessive-pronouns)]
+                                 (gender-cases-submap-fn gender))
+          select-cases-map (into {} gender-cases-submaps)
+          fmtr (msg/formatter {:select-args [["gender_of_host" "select"]
+                                             ["num_guests" "plural" "offset:1"]]
+                               :select-cases select-cases-map
+                               :locale ULocale/ENGLISH})]
+      (let [args-map {"gender_of_host" "male"
+                      "host" "MC Hammer"
+                      "num_guests" 0
+                      ;;"guest" "DJ Jazzy Jeff"
+                      }]
+        (is (= "MC Hammer does not give a party."
+               (msg/format fmtr args-map))))
+      (let [args-map {"gender_of_host" "male"
+                      "host" "MC Hammer"
+                      "num_guests" 2
+                      "guest" "DJ Jazzy Jeff"
+                      }]
+        (is (= "MC Hammer invites DJ Jazzy Jeff and one other person to his party."
+               (msg/format fmtr args-map))))
+      (let [args-map {"gender_of_host" "female"
+                      "host" "Paula Poundstone"
+                      "num_guests" 1
+                      "guest" "Michelle Wolf"}]
+        (is (= "Paula Poundstone invites Michelle Wolf to her party."
+               (msg/format fmtr args-map))))
+      (let [args-map {"gender_of_host" "other"
+                      "host" "The Fry Guys"
+                      "num_guests" 8
+                      "guest" "Ronald McDonald"}]
+        (is (= "The Fry Guys invites Ronald McDonald and 7 other people to their party."
+               (msg/format fmtr args-map)))))))
+
+(deftest selection-format-map-vals-multi-arg-v3
+  (testing "version 3 of simplifying multi-arg selection syntax"
+    (let [gender-possessive-pronouns {"female" "her"
+                                      "male" "his"
+                                      "other" "their"}
+          gender-cases-submap-fn (fn [gender]
+                                   (let [possessive-pronoun (get gender-possessive-pronouns gender)
+                                         submap {[gender "=0"] "{host} does not give a party."
+                                                 [gender "=1"] (str "{host} invites {guest} to " possessive-pronoun  " party.")
+                                                 [gender "=2"] (str "{host} invites {guest} and one other person to " possessive-pronoun  " party.")
+                                                 [gender "other"] (str "{host} invites {guest} and # other people to " possessive-pronoun " party.")}]
+                                     submap))
+          select-cases-map (into {} (->> (keys gender-possessive-pronouns)
+                                         (map gender-cases-submap-fn)))
+          fmtr (msg/formatter {:select-args [["gender_of_host" "select"]
+                                             ["num_guests" "plural" "offset:1"]]
+                               :select-cases select-cases-map
                                :locale ULocale/ENGLISH})]
       (let [args-map {"gender_of_host" "male"
                       "host" "MC Hammer"
