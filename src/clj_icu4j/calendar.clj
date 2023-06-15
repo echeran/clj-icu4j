@@ -110,6 +110,19 @@
   ;; calendar.
   (rd 1))
 
+;; copying the ICU4X logic from icu_calendar::helpers::div_rem_euclid,
+;; which is based on i32 (ints)
+(defn div-rem-euclid [n d]
+  (let [a (quot n d)
+        b (rem n d)]
+    (if (or (>= n 0) (zero? b))
+      [a b]
+      [(dec a) (+ d b)])))
+
+(defn rem-euclid [n d]
+  (-> (div-rem-euclid n d)
+      second))
+
 (defn quotient [m n]
   ;; TYPE (real nonzero-real) -> integer
   ;; Whole part of $m$/$n$.
@@ -125,19 +138,6 @@
 
   (-> (div-rem-euclid m n)
       first))
-
-;; copying the ICU4X logic from icu_calendar::helpers::div_rem_euclid,
-;; which is based on i32 (ints)
-(defn div-rem-euclid [n d]
-  (let [a (quot n d)
-        b (rem n d)]
-    (if (or (>= n 0) (zero? b))
-      [a b]
-      [(dec a) (+ d b)])))
-
-(defn rem-euclid [n d]
-  (-> (div-rem-euclid n d)
-      second))
 
 (defn gregorian-year-from-fixed [date]
   ;; TYPE fixed-date -> gregorian-year
