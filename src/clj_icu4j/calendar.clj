@@ -691,3 +691,19 @@
         n (round (- (/ (- tee t0) mean-synodic-month)
                     (/ phi (deg 360))))]
     (nth-new-moon (next k n (>= (nth-new-moon k) tee)))))
+
+
+
+(defn arithmetic-persian-leap-year? [p-year]
+  ;; TYPE persian-year -> boolean
+  ;; True if $p-year$ is a leap year on the Persian calendar.
+  (let [y                      ; Years since start of 2820-year cycles
+        (if (< 0 p-year)
+          (- p-year 474)
+          (- p-year 473))     ; No year zero
+        year                 ; Equivalent year in the range 474..3263
+        (+ (mod y 2820) 474)]
+    (< (mod (* (+ year 38)
+               31)
+            128)
+       31)))
