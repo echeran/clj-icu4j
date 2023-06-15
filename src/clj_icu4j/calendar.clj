@@ -343,11 +343,9 @@
   ;; running simultaneously thru lists l1...ln.
 
   ;; list is now a typical Clojure binding vector
-  `(apply '+ (map (fn ~(vec (map first (partition 2 list)))
+  `(apply + (map (fn ~(vec (map first (partition 2 list)))
                     ~body)
-                  [~@(map second (partition 2 list))]))
-  
-  )
+                  ~@(map second (partition 2 list)))))
 
 
 (defn universal-from-dynamical [tee]
