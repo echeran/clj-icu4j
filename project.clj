@@ -5,4 +5,5 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/math.numeric-tower "0.0.5"]
-                 [com.ibm.icu/icu4j "62.1"]])
+                 [com.ibm.icu/icu4j "62.1"]]
+  :repl-options {:init-ns clj-icu4j.calendar})
