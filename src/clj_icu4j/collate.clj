@@ -46,6 +46,10 @@
     ;; return the immutable version ("frozen") of the collator
     (.freeze col)))
 
-(defn compare
+(defn collator-compare
   [col s1 s2]
   (.compare col s1 s2))
+
+(defn collator->comparator
+  [col]
+  (comparator (fn [s1 s2] (neg? (collator-compare col s1 s2)))))
