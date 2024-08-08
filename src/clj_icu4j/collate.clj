@@ -31,9 +31,9 @@
                   col
                   (let [old-rules (.getRules col)
                         new-rules (str old-rules rules)]
-                    (RuleBasedCollator/getInstance new-rules))))
+                    (new RuleBasedCollator new-rules))))
               (if rules
-                (RuleBasedCollator/getInstance rules)
+                (new RuleBasedCollator rules)
                 (RuleBasedCollator/getInstance)))]
     (when strength
       (.setStrength col (get strengths strength)))
