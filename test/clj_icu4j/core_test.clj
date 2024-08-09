@@ -2,9 +2,6 @@
   (:require [clojure.test :refer :all]
             [clj-icu4j.core :refer :all]))
 
-(deftest a-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
 
 (def s1 " This is a sentence. This is another sentence. இது ஒரு வாக்கியம்.  இது அடுத்த வாக்கியம்.  எப்படி இருக்கிறது? ")
 
