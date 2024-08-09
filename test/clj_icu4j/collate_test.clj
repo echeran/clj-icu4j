@@ -29,13 +29,13 @@
 
 (deftest comparator-test
   (let [expected ["பட்டம்" "படம்" "படி" "படு" "பண்டம்" "பத்து" "பந்து"]
-        input [(nth words 4)
-               (nth words 1)
-               (nth words 3)
-               (nth words 0)
-               (nth words 2)
-               (nth words 6)
-               (nth words 5)]
+        input [(nth expected 4)
+               (nth expected 1)
+               (nth expected 3)
+               (nth expected 0)
+               (nth expected 2)
+               (nth expected 6)
+               (nth expected 5)]
         coll-ta (collator {:locale "ta"})
         coll-ta-comp (collator->comparator coll-ta)]
     (is (= expected (sort coll-ta-comp input)))))
